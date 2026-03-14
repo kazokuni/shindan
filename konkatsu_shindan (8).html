@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>婚活タイプ診断｜家族になろうよ。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8F0;
+    --white: #FFFFFF;
+    --dark: #1E1A17;
+    --brown: #7A5C4A;
+    --accent: #C4623A;
+    --accent2: #E8956A;
+    --accent-light: #FAEADE;
+    --muted: #9A8E85;
+    --green: #5A9B6E;
+    --border: #EAD9C6;
+    --line: #06C755;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--dark);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ===== TOP ===== */
+  #topScreen {
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 28px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #topScreen::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(196,98,58,0.1) 0%, transparent 70%);
+    top: -120px; right: -120px;
+    pointer-events: none;
+  }
+  #topScreen::after {
+    content: '';
+    position: absolute;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(90,155,110,0.08) 0%, transparent 70%);
+    bottom: 20px; left: -80px;
+    pointer-events: none;
+  }
+
+  .top-logo { width: 200px; margin: 0 auto 32px; opacity: 0; animation: popIn 0.5s ease 0.1s forwards; }
+  .top-badge {
+    display: inline-block; background: var(--accent-light); color: var(--accent);
+    font-size: 11px; letter-spacing: 0.2em; padding: 6px 16px; border-radius: 20px;
+    margin-bottom: 24px; font-weight: 500;
+    opacity: 0; animation: popIn 0.5s ease 0.2s forwards;
+  }
+  .top-title {
+    font-family: 'Kaisei Decol', serif; font-size: clamp(26px, 7vw, 46px);
+    font-weight: 700; line-height: 1.55; margin-bottom: 20px;
+    opacity: 0; animation: popIn 0.5s ease 0.3s forwards;
+  }
+  .top-title .hl {
+    color: var(--accent); position: relative; display: inline-block;
+  }
+  .top-title .hl::after {
+    content: ''; position: absolute; left: 0; bottom: -2px; right: 0; height: 4px;
+    background: var(--accent-light); border-radius: 2px; z-index: -1;
+  }
+  .top-desc {
+    font-size: 15px; color: var(--brown); line-height: 2; margin-bottom: 10px;
+    opacity: 0; animation: popIn 0.5s ease 0.4s forwards;
+  }
+  .top-meta-row {
+    display: flex; gap: 12px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap;
+    opacity: 0; animation: popIn 0.5s ease 0.5s forwards;
+  }
+  .meta-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--white); border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; color: var(--muted);
+  }
+  .type-preview {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    max-width: 420px; margin: 0 auto 36px;
+    opacity: 0; animation: popIn 0.5s ease 0.55s forwards;
+  }
+  .type-chip {
+    background: var(--white); border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 20px; font-size: 11px; color: var(--brown);
+    white-space: nowrap;
+  }
+  .start-btn {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    background: var(--accent); color: white;
+    padding: 22px 0; font-size: 18px; font-weight: 500; letter-spacing: 0.12em;
+    border-radius: 50px; cursor: pointer; border: none;
+    width: 100%; max-width: 360px;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    box-shadow: 0 8px 28px rgba(196,98,58,0.35);
+    transition: all 0.25s;
+    opacity: 0; animation: popIn 0.5s ease 0.65s forwards;
+  }
+  .start-btn:hover { background: #b5552f; transform: translateY(-3px); box-shadow: 0 12px 36px rgba(196,98,58,0.45); }
+  .start-btn .arrow { font-size: 20px; transition: transform 0.2s; }
+  .start-btn:hover .arrow { transform: translateX(5px); }
+  .top-note {
+    margin-top: 14px; font-size: 11px; color: var(--muted);
+    opacity: 0; animation: popIn 0.5s ease 0.75s forwards;
+  }
+
+  /* ===== QUIZ ===== */
+  #quizScreen { min-height: 100vh; padding: 0; }
+  .quiz-header {
+    background: var(--white); padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .quiz-header-inner { max-width: 560px; margin: 0 auto; }
+  .quiz-logo-small { width: 100px; display: block; margin: 0 auto 10px; }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--muted); margin-bottom: 7px; letter-spacing: 0.05em;
+  }
+  .progress-bar-bg { height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; }
+  .progress-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 10px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .quiz-body { max-width: 560px; margin: 0 auto; padding: 36px 24px 100px; }
+  .question-num {
+    display: inline-block; background: var(--accent); color: white;
+    font-size: 11px; letter-spacing: 0.2em; padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 16px; font-weight: 500;
+  }
+  .question-text {
+    font-family: 'Kaisei Decol', serif; font-size: clamp(20px, 5vw, 28px);
+    font-weight: 700; line-height: 1.6; margin-bottom: 28px; white-space: pre-line;
+  }
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    background: var(--white); border: 2px solid var(--border);
+    padding: 16px 18px 16px 52px; text-align: left;
+    font-size: 14px; font-family: 'Zen Kaku Gothic New', sans-serif; font-weight: 400;
+    color: var(--dark); cursor: pointer; border-radius: 12px; line-height: 1.7;
+    transition: all 0.2s; position: relative;
+  }
+  .choice-label {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    width: 26px; height: 26px; background: var(--accent-light); color: var(--accent);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; transition: all 0.2s;
+  }
+  .choice-btn:hover { border-color: var(--accent2); background: var(--accent-light); transform: translateX(4px); }
+  .choice-btn:hover .choice-label { background: var(--accent); color: white; }
+  .choice-btn.selected { border-color: var(--accent); background: var(--accent-light); }
+  .choice-btn.selected .choice-label { background: var(--accent); color: white; }
+
+  .quiz-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(255,248,240,0.97); backdrop-filter: blur(8px);
+    border-top: 1px solid var(--border); padding: 14px 24px 18px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .next-btn {
+    background: var(--border); color: var(--muted); border: none;
+    padding: 16px 0; font-size: 16px; font-weight: 500; letter-spacing: 0.1em;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    cursor: not-allowed; border-radius: 50px; transition: all 0.25s; pointer-events: none;
+    width: 100%; max-width: 400px;
+  }
+  .next-btn.enabled {
+    background: var(--accent); color: white; cursor: pointer; pointer-events: auto;
+    box-shadow: 0 4px 20px rgba(196,98,58,0.35);
+  }
+  .next-btn.enabled:hover { background: #b5552f; transform: translateY(-2px); }
+  .back-btn {
+    font-size: 12px; color: var(--muted); cursor: pointer; border: none;
+    background: none; font-family: 'Zen Kaku Gothic New', sans-serif;
+    padding: 4px 12px; border-radius: 8px; transition: all 0.2s;
+  }
+  .back-btn:hover:not(:disabled) { color: var(--dark); }
+  .back-btn:disabled { opacity: 0.25; cursor: default; }
+
+  /* ===== RESULT ===== */
+  #resultScreen { min-height: 100vh; }
+
+  .result-hero {
+    background: var(--dark); color: white;
+    padding: 48px 24px 40px; text-align: center; position: relative; overflow: hidden;
+  }
+  .result-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 20% 0%, rgba(196,98,58,0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(90,155,110,0.15) 0%, transparent 50%);
+  }
+  .result-logo {
+    width: 110px; margin: 0 auto 24px; position: relative;
+    filter: brightness(0) invert(1); opacity: 0.8;
+  }
+  .result-label {
+    font-size: 11px; letter-spacing: 0.25em; color: rgba(255,255,255,0.45);
+    margin-bottom: 16px; display: block; position: relative;
+  }
+
+  /* タイプアイコン表示エリア */
+  .type-icon-wrap {
+    position: relative; z-index: 1; margin: 0 auto 20px;
+    width: 160px; height: 160px;
+  }
+  #typeIconCanvas {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    animation: bounceIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+  @keyframes bounceIn {
+    0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+    60% { transform: scale(1.15) rotate(3deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .result-type-name {
+    font-family: 'Kaisei Decol', serif; font-size: clamp(24px, 6vw, 38px);
+    font-weight: 700; color: var(--accent2); margin-bottom: 8px;
+    position: relative; line-height: 1.4;
+  }
+  .result-catch { font-size: 14px; color: rgba(255,255,255,0.5); position: relative; }
+
+  .result-body { max-width: 560px; margin: 0 auto; padding: 36px 24px 0; }
+  .result-desc-box {
+    background: var(--white); border-radius: 16px; padding: 28px 24px;
+    margin-bottom: 14px; border: 1px solid var(--border);
+  }
+  .result-desc-title {
+    font-family: 'Kaisei Decol', serif; font-size: 17px; font-weight: 700;
+    margin-bottom: 14px; color: var(--dark);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .result-desc-title::before {
+    content: ''; display: inline-block; width: 4px; height: 18px;
+    background: var(--accent); border-radius: 2px; flex-shrink: 0;
+  }
+  .result-desc { font-size: 14px; line-height: 2.1; color: var(--brown); white-space: pre-line; }
+  .result-advice-box {
+    background: var(--accent-light); border-radius: 16px; padding: 24px;
+    margin-bottom: 32px; border: 1px solid rgba(196,98,58,0.15);
+  }
+  .advice-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+  }
+  .advice-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    object-fit: cover; object-position: center top;
+    border: 3px solid white;
+    box-shadow: 0 4px 12px rgba(196,98,58,0.2);
+    flex-shrink: 0;
+  }
+  .advice-name-wrap { display: flex; flex-direction: column; gap: 2px; }
+  .advice-name {
+    font-family: 'Kaisei Decol', serif; font-size: 15px; font-weight: 700;
+    color: var(--accent);
+  }
+  .advice-role { font-size: 11px; color: var(--brown); letter-spacing: 0.05em; }
+  .result-advice-box p { font-size: 14px; line-height: 2; color: var(--brown); }
+
+  /* CTA */
+  .cta-section { background: var(--dark); padding: 44px 24px 52px; text-align: center; }
+  .cta-title {
+    font-family: 'Kaisei Decol', serif; font-size: clamp(18px, 4vw, 24px);
+    font-weight: 700; margin-bottom: 10px; color: white; line-height: 1.6;
+  }
+  .cta-sub { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 2; margin-bottom: 28px; }
+  .btn-consult {
+    display: block; max-width: 380px; margin: 0 auto 20px;
+    background: var(--accent); color: white;
+    padding: 18px 24px; font-size: 15px; font-weight: 500; letter-spacing: 0.08em;
+    border-radius: 50px; text-align: center; text-decoration: none;
+    transition: all 0.25s; font-family: 'Zen Kaku Gothic New', sans-serif;
+    box-shadow: 0 4px 20px rgba(196,98,58,0.4);
+  }
+  .btn-consult:hover { background: #b5552f; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(196,98,58,0.5); }
+  .cta-reassure {
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 36px;
+  }
+  .cta-reassure span { font-size: 11px; color: rgba(255,255,255,0.35); display: flex; align-items: center; gap: 4px; }
+  .cta-reassure span::before { content: '✓'; color: var(--green); }
+
+  /* SNS SHARE */
+  .share-section { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 28px; }
+  .share-label { font-size: 12px; color: rgba(255,255,255,0.35); letter-spacing: 0.15em; margin-bottom: 16px; display: block; }
+
+  .share-img-wrap { max-width: 360px; margin: 0 auto 20px; text-align: center; }
+  .share-img-wrap img { width: 100%; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); display: block; }
+  .share-img-note { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 8px; letter-spacing: 0.05em; }
+
+  .share-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .share-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 11px 18px; border-radius: 50px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; font-family: 'Zen Kaku Gothic New', sans-serif;
+    transition: all 0.2s; text-decoration: none;
+  }
+  .share-dl { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); }
+  .share-dl:hover { background: rgba(255,255,255,0.28); transform: translateY(-2px); }
+  .share-x { background: #000; color: white; }
+  .share-x:hover { background: #333; transform: translateY(-2px); }
+  .share-line { background: var(--line); color: white; }
+  .share-line:hover { background: #05a847; transform: translateY(-2px); }
+  .share-copy { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.2); }
+  .share-copy:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+  .share-note { font-size: 11px; color: rgba(255,255,255,0.28); margin-bottom: 12px; }
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 12px auto 0;
+    max-width: 360px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.9;
+    text-align: left;
+  }
+  .x-guide strong { color: white; }
+
+  .retry-btn {
+    display: block; text-align: center; margin: 0 auto;
+    font-size: 12px; color: rgba(255,255,255,0.28); cursor: pointer;
+    border: none; background: none; font-family: 'Zen Kaku Gothic New', sans-serif;
+    text-decoration: underline; text-underline-offset: 3px; transition: color 0.2s;
+  }
+  .retry-btn:hover { color: rgba(255,255,255,0.55); }
+
+  /* hidden canvas for share image */
+  #shareCanvas { display: none; }
+
+  /* toast */
+  .toast {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--dark); color: white; padding: 12px 24px; border-radius: 50px;
+    font-size: 13px; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .slide-in { animation: popIn 0.35s ease forwards; }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast">📋 コピーしました！</div>
+<canvas id="shareCanvas" width="800" height="1000"></canvas>
+<img id="profileImgCache" src="data:image/jpeg;base64,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" style="display:none;" crossorigin="anonymous">
+
+<!-- TOP -->
+<div id="topScreen" class="screen active" style="display:flex;">
+  <img src="logo.png" alt="家族になろうよ。" class="top-logo">
+  <span class="top-badge">✨ 無料・登録不要・約2分</span>
+  <h1 class="top-title">あなたの婚活、<br><span class="hl">なぜ進まない</span>のか<br>わかります。</h1>
+  <p class="top-desc">7つの質問に答えるだけ。<br>あなたの「婚活タイプ」が分かります。</p>
+  <div class="top-meta-row">
+    <span class="meta-chip">📝 全7問</span>
+    <span class="meta-chip">⏱ 約2分</span>
+    <span class="meta-chip">🔓 登録不要</span>
+  </div>
+  <div class="type-preview">
+    <span class="type-chip">⚔️ 様子見すぎ侍</span>
+    <span class="type-chip">📱 アプリ難民</span>
+    <span class="type-chip">🎤 俺の話聞いてくれ型</span>
+    <span class="type-chip">📄 恋愛白紙さん</span>
+    <span class="type-chip">他6タイプ…</span>
+  </div>
+  <button class="start-btn" onclick="startQuiz()">診断スタート <span class="arrow">→</span></button>
+  <p class="top-note">完全無料・個人情報の入力は不要です</p>
+</div>
+
+<!-- QUIZ -->
+<div id="quizScreen" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-header-inner">
+      <img src="logo.png" alt="家族になろうよ。" class="quiz-logo-small">
+      <div class="progress-label">
+        <span id="progressText">質問 1 / 7</span>
+        <span id="progressPct">14%</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:14%"></div></div>
+    </div>
+  </div>
+  <div class="quiz-body">
+    <span class="question-num" id="questionNum">Q.01</span>
+    <p class="question-text" id="questionText"></p>
+    <div class="choices" id="choicesWrap"></div>
+  </div>
+  <div class="quiz-footer">
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">次へ →</button>
+    <button class="back-btn" id="backBtn" onclick="prevQuestion()" disabled>← 前の質問に戻る</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="resultScreen" class="screen">
+  <div class="result-hero">
+    <img src="logo.png" alt="家族になろうよ。" class="result-logo">
+    <span class="result-label">あなたの婚活タイプは…</span>
+    <div class="type-icon-wrap">
+      <canvas id="typeIconCanvas" width="320" height="320"></canvas>
+    </div>
+    <h2 class="result-type-name" id="resultName"></h2>
+    <p class="result-catch" id="resultCatch"></p>
+  </div>
+  <div class="result-body">
+    <div class="result-desc-box">
+      <h3 class="result-desc-title" id="resultDescTitle"></h3>
+      <p class="result-desc" id="resultDesc"></p>
+    </div>
+    <div class="result-advice-box">
+      <div class="advice-header">
+        <img src="data:image/jpeg;base64,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" alt="上田 尚" class="advice-avatar">
+        <div class="advice-name-wrap">
+          <span class="advice-name">上田 尚</span>
+          <span class="advice-role">家族になろうよ。代表カウンセラー</span>
+        </div>
+      </div>
+      <p id="resultAdvice"></p>
+    </div>
+  </div>
+  <div class="cta-section">
+    <h3 class="cta-title">あなたのタイプ、<br>一緒に整理しませんか？</h3>
+    <p class="cta-sub">無理に決めなくて大丈夫です。<br>まず話だけ聞いてみてください。</p>
+    <a href="https://kisshiss.com/?page_id=24217" class="btn-consult">📅 無料相談を予約する（60分・オンライン可）</a>
+    <div class="cta-reassure">
+      <span>入会の勧誘はしません</span>
+      <span>オンライン対応可</span>
+      <span>10分〜OK</span>
+    </div>
+    <div class="share-section">
+      <span class="share-label">— 結果をシェアする —</span>
+
+      <!-- シェア画像プレビュー -->
+      <div class="share-img-wrap">
+        <img id="sharePreviewImg" src="" alt="シェア用画像">
+        <p class="share-img-note">↑ この画像をSNSに貼り付けてシェアできます</p>
+      </div>
+
+      <div class="share-btns">
+        <a id="shareImgDownload" href="#" download="konkatsu_type.png" class="share-btn share-dl">
+          💾 画像を保存する
+        </a>
+        <button id="shareX" onclick="shareToX()" class="share-btn share-x">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.262 5.636zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Xでシェア
+        </button>
+        <a id="shareLine" href="#" target="_blank" class="share-btn share-line">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="10" fill="white"/><path d="M10 3.5C6.96 3.5 4.5 5.65 4.5 8.3c0 2.36 2.1 4.33 4.93 4.7l.57.08v1.92l1.65-1.65c2.37-.5 3.85-2.21 3.85-4.05C15.5 5.65 13.04 3.5 10 3.5z" fill="#06C755"/></svg>
+          LINEでシェア
+        </a>
+        <button class="share-btn share-copy" onclick="copyShareText()">
+          📋 テキストをコピー
+        </button>
+      </div>
+      <p class="share-note">※ 画像を保存してSNSに投稿するとより伝わります！</p>
+      <div class="x-guide" id="xGuide" style="display:none;">
+        <p>📸 画像が保存されました！<br>X（旧Twitter）の投稿画面が開いたら、<br><strong>📎 画像ボタンから保存した画像を添付</strong>してポストしてください。</p>
+      </div>
+    </div>
+    <button class="retry-btn" onclick="resetQuiz()">もう一度診断する</button>
+  </div>
+</div>
+
+<script>
+// ===== QUESTIONS =====
+const questions = [
+  {
+    text: "婚活を始めたきっかけは\nなんですか？",
+    choices: [
+      { label:"A", text:"マッチングアプリを使ってみたが疲れてしまった", types:["アプリ難民","婚活燃え尽き症候群"] },
+      { label:"B", text:"周りが結婚し始めて、なんとなく焦ってきた", types:["永遠の準備中さん","結婚ビジョン白紙さん"] },
+      { label:"C", text:"恋愛経験がほぼなく、どこから始めればいいか分からない", types:["恋愛白紙さん","全部一人で抱え込み職人"] },
+      { label:"D", text:"婚活はしたいけど、まだ本格的には動いていない", types:["永遠の準備中さん","様子見すぎ侍"] }
+    ]
+  },
+  {
+    text: "デートや会話のとき、\n自分はどちらに近いですか？",
+    choices: [
+      { label:"A", text:"気づいたら自分の話ばかりしてしまっていることがある", types:["俺の話聞いてくれ型","スペック提出型"] },
+      { label:"B", text:"真剣すぎると言われたり、重いと感じさせてしまう", types:["真面目すぎて重い人","様子見すぎ侍"] },
+      { label:"C", text:"大人しすぎる・印象が薄いと言われることがある", types:["全部一人で抱え込み職人","恋愛白紙さん"] },
+      { label:"D", text:"特に指摘されたことはないが、なぜか進まない", types:["惜しいところ止まり人","結婚ビジョン白紙さん"] }
+    ]
+  },
+  {
+    text: "今の婚活の状況を\n一番よく表しているのは？",
+    choices: [
+      { label:"A", text:"アプリやサービスをいくつか試したが、結果が出ていない", types:["アプリ難民","婚活燃え尽き症候群"] },
+      { label:"B", text:"まだ始めていない・ずっと準備中のまま", types:["永遠の準備中さん","結婚ビジョン白紙さん"] },
+      { label:"C", text:"何度か交際まで進んだが、成婚できていない", types:["惜しいところ止まり人","真面目すぎて重い人"] },
+      { label:"D", text:"お見合いやデートまでは行くが、交際に進まない", types:["様子見すぎ侍","スペック提出型"] }
+    ]
+  },
+  {
+    text: "相手に求める条件について、\n自分はどちらに近いですか？",
+    choices: [
+      { label:"A", text:"条件はあるが、会うと「なんか違う」を繰り返している", types:["惜しいところ止まり人","スペック提出型"] },
+      { label:"B", text:"正直まだよく分からない・結婚後の生活が想像できない", types:["結婚ビジョン白紙さん","恋愛白紙さん"] },
+      { label:"C", text:"条件より「一緒にいて楽か」を重視したい", types:["全部一人で抱え込み職人","様子見すぎ侍"] },
+      { label:"D", text:"年収・職業・学歴など、具体的な条件がはっきりある", types:["真面目すぎて重い人","俺の話聞いてくれ型"] }
+    ]
+  },
+  {
+    text: "婚活で一番しんどいと\n感じることは？",
+    choices: [
+      { label:"A", text:"疲れた・消耗している・もう休みたい気持ちになる", types:["アプリ難民","婚活燃え尽き症候群"] },
+      { label:"B", text:"何をすればいいか分からず、一人で悩んでいる", types:["全部一人で抱え込み職人","恋愛白紙さん"] },
+      { label:"C", text:"タイミングや勇気が出なくて、動けない", types:["様子見すぎ侍","永遠の準備中さん"] },
+      { label:"D", text:"動いてはいるけど、手応えがまったくない", types:["惜しいところ止まり人","スペック提出型"] }
+    ]
+  },
+  {
+    text: "デートの後、自分は\nどうなりがちですか？",
+    choices: [
+      { label:"A", text:"次の連絡やアクションが遅くなる・様子を見てしまう", types:["様子見すぎ侍","全部一人で抱え込み職人"] },
+      { label:"B", text:"反省点ばかり気になって、自分を責めてしまう", types:["婚活燃え尽き症候群","真面目すぎて重い人"] },
+      { label:"C", text:"相手の気持ちが読めなくて、ずっと不安になる", types:["惜しいところ止まり人","恋愛白紙さん"] },
+      { label:"D", text:"自分の話が多すぎたかなと後で気になる", types:["俺の話聞いてくれ型","スペック提出型"] }
+    ]
+  },
+  {
+    text: "婚活のことを、\n誰かに相談できていますか？",
+    choices: [
+      { label:"A", text:"誰にも話していない・相談できる人がいない", types:["全部一人で抱え込み職人","恋愛白紙さん"] },
+      { label:"B", text:"話しているが、アドバイスがしっくりこない", types:["結婚ビジョン白紙さん","アプリ難民"] },
+      { label:"C", text:"話せる人はいるが、結局一人で抱え込んでしまう", types:["全部一人で抱え込み職人","様子見すぎ侍"] },
+      { label:"D", text:"オープンに話せているが、行動に結びついていない", types:["永遠の準備中さん","婚活燃え尽き症候群"] }
+    ]
+  }
+];
+
+// ===== TYPE DATA =====
+const types = {
+  "様子見すぎ侍": {
+    emoji:"⚔️", catch:"刀を抜く前に戦が終わる",
+    bg:["#2C3E50","#34495E"], accent:"#F39C12",
+    icon: (ctx,cx,cy,r) => {
+      // 侍の顔＋刀
+      ctx.fillStyle="#F39C12";
+      // 頭
+      ctx.beginPath(); ctx.arc(cx,cy-r*0.1,r*0.38,0,Math.PI*2); ctx.fill();
+      // 兜
+      ctx.fillStyle="#E74C3C";
+      ctx.beginPath(); ctx.ellipse(cx,cy-r*0.38,r*0.4,r*0.18,0,Math.PI,0,true); ctx.fill();
+      ctx.fillStyle="#C0392B";
+      ctx.fillRect(cx-r*0.45,cy-r*0.42,r*0.9,r*0.12);
+      // 刀
+      ctx.strokeStyle="#ECF0F1"; ctx.lineWidth=r*0.08; ctx.lineCap="round";
+      ctx.beginPath(); ctx.moveTo(cx-r*0.55,cy+r*0.6); ctx.lineTo(cx+r*0.45,cy-r*0.3); ctx.stroke();
+      ctx.strokeStyle="#F39C12"; ctx.lineWidth=r*0.05;
+      ctx.beginPath(); ctx.moveTo(cx-r*0.55,cy+r*0.6); ctx.lineTo(cx-r*0.65,cy+r*0.7); ctx.stroke();
+    },
+    descTitle:"タイミングを逃し続ける、慎重すぎるあなたへ",
+    desc:"真面目で誠実。それはあなたの大きな魅力です。でも、その慎重さが婚活では裏目に出てしまっています。\n\n「まだ早いかな」と思っているうちに、相手は別の人と進んでいく——そんな経験、心当たりありませんか？\n\n婚活に必要なのは、勇気ではなく「小さなアクション」です。完璧なタイミングは来ません。",
+    advice:"慎重さは才能です。でも婚活では「あと半歩」踏み出す練習が必要です。一緒に、最初の一歩を整理しましょう。"
+  },
+  "アプリ難民": {
+    emoji:"📱", catch:"スワイプ歴3年、出口が見えない",
+    bg:["#1A1A2E","#16213E"], accent:"#0F3460",
+    icon: (ctx,cx,cy,r) => {
+      // スマホ
+      const w=r*0.5, h=r*0.75;
+      ctx.fillStyle="#ECF0F1";
+      ctx.beginPath(); ctx.roundRect(cx-w/2,cy-h/2,w,h,r*0.08); ctx.fill();
+      ctx.fillStyle="#3498DB";
+      ctx.fillRect(cx-w/2+r*0.04,cy-h/2+r*0.1,w-r*0.08,h-r*0.18);
+      // x mark
+      ctx.strokeStyle="#E74C3C"; ctx.lineWidth=r*0.08; ctx.lineCap="round";
+      ctx.beginPath(); ctx.moveTo(cx-r*0.12,cy-r*0.12); ctx.lineTo(cx+r*0.12,cy+r*0.12); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx+r*0.12,cy-r*0.12); ctx.lineTo(cx-r*0.12,cy+r*0.12); ctx.stroke();
+      // swipe arrow
+      ctx.strokeStyle="#F39C12"; ctx.lineWidth=r*0.06;
+      ctx.beginPath(); ctx.moveTo(cx-r*0.18,cy+r*0.3); ctx.lineTo(cx+r*0.18,cy+r*0.3); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx+r*0.08,cy+r*0.2); ctx.lineTo(cx+r*0.18,cy+r*0.3); ctx.lineTo(cx+r*0.08,cy+r*0.4); ctx.stroke();
+    },
+    descTitle:"アプリで消耗しているあなたへ",
+    desc:"マッチングアプリは悪くない。でも、あなたには今の方法が合っていないだけかもしれません。\n\nアプリは「反応の偏り」が起きやすい仕組みで、真剣な人ほど消耗しやすい構造になっています。\n\n出会えなかった＝あなたがダメ、ではありません。出会い方を変えるだけで、流れは変わります。",
+    advice:"3年間の頑張りは無駄じゃない。ただ、出口の見えないループに入っているだけです。一緒に、方法を見直しましょう。"
+  },
+  "俺の話聞いてくれ型": {
+    emoji:"🎤", catch:"気づいたら1時間、自分の話してた",
+    bg:["#6C3483","#884EA0"], accent:"#F1C40F",
+    icon: (ctx,cx,cy,r) => {
+      // マイク
+      ctx.fillStyle="#ECF0F1";
+      ctx.beginPath(); ctx.roundRect(cx-r*0.18,cy-r*0.45,r*0.36,r*0.5,r*0.18); ctx.fill();
+      ctx.strokeStyle="#BDC3C7"; ctx.lineWidth=r*0.05;
+      ctx.beginPath(); ctx.arc(cx,cy-r*0.2,r*0.38,0,Math.PI); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx,cy+r*0.18); ctx.lineTo(cx,cy+r*0.45); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-r*0.22,cy+r*0.45); ctx.lineTo(cx+r*0.22,cy+r*0.45); ctx.stroke();
+      // 音符
+      ctx.fillStyle="#F1C40F";
+      ctx.font = `bold ${r*0.3}px serif`;
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText("♪",cx+r*0.45,cy-r*0.3);
+      ctx.font = `bold ${r*0.2}px serif`;
+      ctx.fillText("♫",cx-r*0.45,cy-r*0.1);
+    },
+    descTitle:"話したいことが多すぎる、熱量あふれるあなたへ",
+    desc:"あなたには伝えたいことがたくさんある。それ自体は素晴らしいことです。\n\nでも相手との会話は「キャッチボール」。自分だけが投げ続けると、相手は疲れてしまいます。\n\n婚活の会話で大事なのは、相手に「もっと話したい」と思わせること。聴く力を少し意識するだけで、印象は大きく変わります。",
+    advice:"熱量があるのは武器です。その熱量を「相手への興味」に向けるだけで、デートの雰囲気がガラッと変わりますよ。"
+  },
+  "恋愛白紙さん": {
+    emoji:"📄", catch:"告白されたことも、したこともない",
+    bg:["#1ABC9C","#17A589"], accent:"#FDFEFE",
+    icon: (ctx,cx,cy,r) => {
+      // 白紙
+      ctx.fillStyle="#FDFEFE";
+      ctx.beginPath(); ctx.roundRect(cx-r*0.35,cy-r*0.45,r*0.7,r*0.85,r*0.05); ctx.fill();
+      ctx.strokeStyle="#BDC3C7"; ctx.lineWidth=r*0.03;
+      ctx.strokeRect(cx-r*0.35,cy-r*0.45,r*0.7,r*0.85);
+      // ハテナ
+      ctx.fillStyle="#1ABC9C";
+      ctx.font = `bold ${r*0.55}px serif`;
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText("?",cx,cy+r*0.0);
+      // ハート小
+      ctx.fillStyle="#E74C3C";
+      ctx.font = `${r*0.22}px serif`;
+      ctx.fillText("♡",cx+r*0.18,cy-r*0.28);
+    },
+    descTitle:"恋愛経験ゼロから始めるあなたへ",
+    desc:"恋愛経験がないことは、恥ずかしいことでも遅いことでもありません。むしろ、先入観なく真剣に向き合える人が多いです。\n\nただ「何から始めればいいか分からない」という迷いを一人で抱えていると、行動に移せないまま時間だけが過ぎてしまいます。\n\n最初の一歩を一緒に整理することが、一番の近道です。",
+    advice:"経験がないから分からなくて当然です。一緒に「最初の一歩」から整理しましょう。恥ずかしいことは何もないです。"
+  },
+  "真面目すぎて重い人": {
+    emoji:"📋", catch:"2回目のデートでライフプランを話す",
+    bg:["#2E4057","#3D5A80"], accent:"#EE6C4D",
+    icon: (ctx,cx,cy,r) => {
+      // クリップボード
+      ctx.fillStyle="#ECF0F1";
+      ctx.beginPath(); ctx.roundRect(cx-r*0.38,cy-r*0.4,r*0.76,r*0.85,r*0.06); ctx.fill();
+      ctx.fillStyle="#95A5A6";
+      ctx.beginPath(); ctx.roundRect(cx-r*0.15,cy-r*0.48,r*0.3,r*0.18,r*0.04); ctx.fill();
+      // チェックリスト
+      ctx.strokeStyle="#2C3E50"; ctx.lineWidth=r*0.04;
+      [cy-r*0.1, cy+r*0.08, cy+r*0.26].forEach((y,i) => {
+        ctx.strokeRect(cx-r*0.25,y-r*0.06,r*0.14,r*0.14);
+        if(i<2){
+          ctx.strokeStyle="#27AE60";
+          ctx.beginPath(); ctx.moveTo(cx-r*0.22,y+r*0.01); ctx.lineTo(cx-r*0.17,y+r*0.07); ctx.lineTo(cx-r*0.1,y-r*0.04); ctx.stroke();
+          ctx.strokeStyle="#2C3E50";
+        }
+        ctx.fillStyle="#2C3E50";
+        ctx.fillRect(cx-r*0.02,y,r*0.22,r*0.04);
+      });
+      // 重さマーク
+      ctx.fillStyle="#EE6C4D";
+      ctx.font=`bold ${r*0.28}px sans-serif`;
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText("！",cx+r*0.42,cy-r*0.25);
+    },
+    descTitle:"真剣さが空回りしてしまうあなたへ",
+    desc:"結婚に真剣なのは、あなたの本気の証拠。でも婚活では、真剣さが「重さ」として伝わってしまうことがあります。\n\n特に序盤のデートで将来の話や条件の話が先行すると、相手が構えてしまいます。\n\nまず「この人と一緒にいると楽しい」と感じてもらうことが先決です。",
+    advice:"真面目さはあなたの最大の強みです。出し方のタイミングを少し変えるだけで、相手の反応が全然違ってきます。"
+  },
+  "永遠の準備中さん": {
+    emoji:"⏰", catch:"「もう少し痩せたら始めます」",
+    bg:["#E67E22","#CA6F1E"], accent:"#FDFEFE",
+    icon: (ctx,cx,cy,r) => {
+      // 時計
+      ctx.fillStyle="#FDFEFE";
+      ctx.beginPath(); ctx.arc(cx,cy,r*0.55,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle="#E67E22"; ctx.lineWidth=r*0.07;
+      ctx.beginPath(); ctx.arc(cx,cy,r*0.55,0,Math.PI*2); ctx.stroke();
+      // 針（いつも同じ位置）
+      ctx.strokeStyle="#2C3E50"; ctx.lineWidth=r*0.07; ctx.lineCap="round";
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx,cy-r*0.38); ctx.stroke();
+      ctx.lineWidth=r*0.05;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+r*0.25,cy); ctx.stroke();
+      // zzz
+      ctx.fillStyle="#E67E22";
+      ctx.font=`bold ${r*0.22}px sans-serif`;
+      ctx.textAlign="left"; ctx.textBaseline="middle";
+      ctx.fillText("z",cx+r*0.5,cy-r*0.3);
+      ctx.font=`bold ${r*0.17}px sans-serif`;
+      ctx.fillText("z",cx+r*0.62,cy-r*0.45);
+      ctx.font=`bold ${r*0.13}px sans-serif`;
+      ctx.fillText("z",cx+r*0.7,cy-r*0.57);
+    },
+    descTitle:"準備を理由に動けないあなたへ",
+    desc:"「準備ができたら始める」——でも、完璧な準備が整う日は来ません。婚活は始めながら整えていくものです。\n\n動き出すことへの不安や恥ずかしさは誰にでもあります。\n\nでも、最初の一歩さえ踏み出せば、意外とスムーズに動き始めることがほとんどです。",
+    advice:"今のあなたで十分です。まず話を聞かせてもらうだけでいい。完璧じゃなくていい、動き出すことが大事です。"
+  },
+  "惜しいところ止まり人": {
+    emoji:"🎯", catch:"あと一歩でいつも着地できない",
+    bg:["#922B21","#C0392B"], accent:"#F9E79F",
+    icon: (ctx,cx,cy,r) => {
+      // 的
+      [r*0.55,r*0.38,r*0.22].forEach((rad,i) => {
+        ctx.fillStyle = i%2===0?"#E74C3C":"#FDFEFE";
+        ctx.beginPath(); ctx.arc(cx,cy,rad,0,Math.PI*2); ctx.fill();
+      });
+      ctx.fillStyle="#C0392B";
+      ctx.beginPath(); ctx.arc(cx,cy,r*0.09,0,Math.PI*2); ctx.fill();
+      // 矢（惜しい位置）
+      ctx.strokeStyle="#2C3E50"; ctx.lineWidth=r*0.06; ctx.lineCap="round";
+      ctx.beginPath(); ctx.moveTo(cx+r*0.28,cy-r*0.28); ctx.lineTo(cx+r*0.08,cy-r*0.08); ctx.stroke();
+      ctx.fillStyle="#8B4513";
+      ctx.beginPath(); ctx.arc(cx+r*0.3,cy-r*0.3,r*0.07,0,Math.PI*2); ctx.fill();
+    },
+    descTitle:"交際まで行くのに成婚できないあなたへ",
+    desc:"行動力はある。出会いもある。交際まで進む。でも、なぜかゴールできない——それがあなたのパターンです。\n\n惜しいところで止まる人には、多くの場合「判断の軸」がないか、「詰めの一手」が足りていません。\n\n経験は十分ある。あとは整理するだけです。",
+    advice:"あなたに足りないのは経験じゃない。判断を整理するサポートです。一緒に、なぜ止まるのかを言葉にしてみましょう。"
+  },
+  "全部一人で抱え込み職人": {
+    emoji:"🗿", catch:"誰にも相談できず頭の中でループ",
+    bg:["#4A4A4A","#626567"], accent:"#AEB6BF",
+    icon: (ctx,cx,cy,r) => {
+      // モアイ
+      ctx.fillStyle="#BDC3C7";
+      // 頭
+      ctx.beginPath(); ctx.ellipse(cx,cy-r*0.15,r*0.28,r*0.42,0,0,Math.PI*2); ctx.fill();
+      // 鼻
+      ctx.fillStyle="#A6ACAF";
+      ctx.beginPath(); ctx.ellipse(cx,cy,r*0.12,r*0.18,0,0,Math.PI*2); ctx.fill();
+      // 目
+      ctx.fillStyle="#5D6D7E";
+      ctx.beginPath(); ctx.ellipse(cx-r*0.1,cy-r*0.22,r*0.06,r*0.04,0,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx+r*0.1,cy-r*0.22,r*0.06,r*0.04,0,0,Math.PI*2); ctx.fill();
+      // 口（への字）
+      ctx.strokeStyle="#5D6D7E"; ctx.lineWidth=r*0.04; ctx.lineCap="round";
+      ctx.beginPath(); ctx.moveTo(cx-r*0.1,cy+r*0.1); ctx.quadraticCurveTo(cx,cy+r*0.06,cx+r*0.1,cy+r*0.1); ctx.stroke();
+      // 台座
+      ctx.fillStyle="#A6ACAF";
+      ctx.beginPath(); ctx.roundRect(cx-r*0.3,cy+r*0.3,r*0.6,r*0.18,r*0.04); ctx.fill();
+    },
+    descTitle:"一人で全部考えすぎているあなたへ",
+    desc:"誰かに頼ることが苦手。相談するのが恥ずかしい。自分で解決しなきゃという気持ちが強い——\n\nそのせいで、頭の中でぐるぐる考え続けて、気づいたら半年経っていませんか？\n\n婚活は「一人でやるもの」ではありません。伴走してくれる人がいるだけで、視界が一気に開けます。",
+    advice:"相談することは弱さじゃないです。一人でやり続けることの方が、実は時間のロスになっています。まず話してみてください。"
+  },
+  "スペック提出型": {
+    emoji:"📊", catch:"履歴書は完璧、でも人間味がない",
+    bg:["#154360","#1A5276"], accent:"#5DADE2",
+    icon: (ctx,cx,cy,r) => {
+      // 棒グラフ
+      const bars = [[r*0.22,r*0.65],[r*0.22,r*0.45],[r*0.22,r*0.82],[r*0.22,r*0.55]];
+      const colors = ["#5DADE2","#2ECC71","#5DADE2","#F39C12"];
+      bars.forEach(([w,h],i) => {
+        const x = cx - r*0.5 + i*(w+r*0.04);
+        ctx.fillStyle = colors[i];
+        ctx.fillRect(x, cy+r*0.4-h, w, h);
+      });
+      // 人間味なしマーク
+      ctx.strokeStyle="#E74C3C"; ctx.lineWidth=r*0.07; ctx.lineCap="round";
+      ctx.beginPath(); ctx.arc(cx+r*0.35,cy-r*0.35,r*0.22,0,Math.PI*2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx+r*0.35-r*0.14,cy-r*0.35-r*0.14);
+      ctx.lineTo(cx+r*0.35+r*0.14,cy-r*0.35+r*0.14);
+      ctx.stroke();
+    },
+    descTitle:"条件はいいのに印象が薄いあなたへ",
+    desc:"年収・学歴・職業——スペックは申し分ない。プロフィールも整っている。\n\nでも、なぜか「いいね」が来ない、会ってみると印象が薄いと言われる。\n\n婚活で相手が選ぶのは「条件」ではなく「この人と一緒にいたいか」です。あなたの人間的な魅力が、まだ伝わっていないだけです。",
+    advice:"スペックはあくまで入り口です。「あなたがどんな人か」が伝わるように、一緒に言葉を整えていきましょう。"
+  },
+  "結婚ビジョン白紙さん": {
+    emoji:"🗺️", catch:"結婚したいけど結婚後が想像できない",
+    bg:["#1E8449","#239B56"], accent:"#ABEBC6",
+    icon: (ctx,cx,cy,r) => {
+      // 地図
+      ctx.fillStyle="#F9F3E3";
+      ctx.beginPath(); ctx.roundRect(cx-r*0.42,cy-r*0.42,r*0.84,r*0.84,r*0.06); ctx.fill();
+      ctx.strokeStyle="#BDC3C7"; ctx.lineWidth=r*0.04;
+      ctx.strokeRect(cx-r*0.42,cy-r*0.42,r*0.84,r*0.84);
+      // 折り目
+      ctx.strokeStyle="#D5CDB8"; ctx.lineWidth=r*0.03;
+      ctx.beginPath(); ctx.moveTo(cx,cy-r*0.42); ctx.lineTo(cx,cy+r*0.42); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx-r*0.42,cy); ctx.lineTo(cx+r*0.42,cy); ctx.stroke();
+      // ？マーク（目的地不明）
+      ctx.fillStyle="#E74C3C";
+      ctx.font=`bold ${r*0.4}px serif`;
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText("?",cx,cy+r*0.02);
+      // ピン
+      ctx.fillStyle="#E74C3C";
+      ctx.beginPath(); ctx.arc(cx-r*0.22,cy-r*0.22,r*0.08,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(cx-r*0.22,cy-r*0.14); ctx.lineTo(cx-r*0.22,cy-r*0.04); ctx.lineWidth=r*0.04; ctx.strokeStyle="#E74C3C"; ctx.stroke();
+    },
+    descTitle:"ゴールは設定しているのに地図がないあなたへ",
+    desc:"「結婚したい」という気持ちはある。でも、結婚後どんな生活をしたいのか、相手にどんな人を求めているのか——それがぼんやりしたまま婚活していませんか？\n\n軸が定まっていないと、誰に会っても「なんか違う」になってしまいます。\n\n「どう生きたいか」から整理することが、婚活の一番の近道です。",
+    advice:"ライフデザインから始めましょう。「何のために結婚するか」が言葉になると、会うべき人が自然に見えてきます。"
+  },
+  "婚活燃え尽き症候群": {
+    emoji:"🕯️", catch:"頑張りすぎて心が先に折れた",
+    bg:["#6C3483","#7D3C98"], accent:"#F8C471",
+    icon: (ctx,cx,cy,r) => {
+      // ろうそく
+      ctx.fillStyle="#FAD7A0";
+      ctx.beginPath(); ctx.roundRect(cx-r*0.15,cy,r*0.3,r*0.45,r*0.04); ctx.fill();
+      // 芯（消えかけ）
+      ctx.strokeStyle="#5D4037"; ctx.lineWidth=r*0.04; ctx.lineCap="round";
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx,cy-r*0.08); ctx.stroke();
+      // 炎（小さい・消えかけ）
+      ctx.fillStyle="#F39C12";
+      ctx.beginPath();
+      ctx.moveTo(cx,cy-r*0.08);
+      ctx.quadraticCurveTo(cx+r*0.1,cy-r*0.2,cx,cy-r*0.3);
+      ctx.quadraticCurveTo(cx-r*0.1,cy-r*0.2,cx,cy-r*0.08);
+      ctx.fill();
+      ctx.fillStyle="#F8C471";
+      ctx.beginPath();
+      ctx.moveTo(cx,cy-r*0.1);
+      ctx.quadraticCurveTo(cx+r*0.05,cy-r*0.18,cx,cy-r*0.24);
+      ctx.quadraticCurveTo(cx-r*0.05,cy-r*0.18,cx,cy-r*0.1);
+      ctx.fill();
+      // 煙
+      ctx.strokeStyle="rgba(200,200,200,0.6)"; ctx.lineWidth=r*0.04;
+      ctx.beginPath(); ctx.moveTo(cx-r*0.12,cy-r*0.5); ctx.quadraticCurveTo(cx,cy-r*0.6,cx+r*0.12,cy-r*0.7); ctx.stroke();
+      // 台座
+      ctx.fillStyle="#E59866";
+      ctx.beginPath(); ctx.roundRect(cx-r*0.22,cy+r*0.45,r*0.44,r*0.1,r*0.04); ctx.fill();
+    },
+    descTitle:"真剣にやりすぎて疲弊しているあなたへ",
+    desc:"誰よりも真剣に、誰よりも努力してきた。それなのに結果が出なくて、気持ちが折れてしまった——\n\nそんな状態ではないですか？\n\n婚活で疲れるのは、あなたが弱いからではありません。やり方が今のあなたに合っていないからです。まず、無理のないペースを一緒に作りましょう。",
+    advice:"頑張ってきたこと、ちゃんと伝わっています。疲れたまま婚活を続けても結果は出ません。一度、立て直す時間を作りましょう。"
+  }
+};
+
+// ===== STATE =====
+let currentQ = 0, answers = [], selectedChoice = null, currentTypeName = "";
+
+// ===== ICON DRAW =====
+function drawTypeIcon(canvas, typeName, size=320) {
+  const ctx = canvas.getContext("2d");
+  const t = types[typeName];
+  const s = size;
+  canvas.width = s; canvas.height = s;
+  const cx = s/2, cy = s/2, r = s/2;
+
+  // background gradient
+  const grad = ctx.createRadialGradient(cx,cy*0.6,0,cx,cy,r);
+  grad.addColorStop(0, t.bg[0]);
+  grad.addColorStop(1, t.bg[1]);
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+
+  // subtle pattern
+  ctx.strokeStyle="rgba(255,255,255,0.05)"; ctx.lineWidth=1;
+  for(let i=0;i<8;i++){
+    ctx.beginPath(); ctx.arc(cx,cy,r*0.15*i,0,Math.PI*2); ctx.stroke();
+  }
+
+  // draw type-specific icon
+  t.icon(ctx, cx, cy, r*0.65);
+}
+
+function generateShareImage(typeName) {
+  const canvas = document.getElementById("shareCanvas");
+  const ctx = canvas.getContext("2d");
+  const W = 800, H = 1000;
+  canvas.width = W; canvas.height = H;
+  const t = types[typeName];
+
+  // ── 背景 ──
+  const bgGrad = ctx.createLinearGradient(0,0,W,H);
+  bgGrad.addColorStop(0, t.bg[0]);
+  bgGrad.addColorStop(1, "#0D0D0D");
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0,0,W,H);
+
+  // 背景サークル装飾
+  ctx.strokeStyle = "rgba(255,255,255,0.04)"; ctx.lineWidth = 1;
+  for(let i=1;i<=6;i++){ ctx.beginPath(); ctx.arc(W/2,260,i*80,0,Math.PI*2); ctx.stroke(); }
+
+  // ── アイコン（円形） ──
+  const iconSize = 300;
+  const tmpC = document.createElement("canvas");
+  drawTypeIcon(tmpC, typeName, iconSize);
+  ctx.save();
+  ctx.beginPath(); ctx.arc(W/2, 260, iconSize/2+4, 0, Math.PI*2);
+  ctx.fillStyle = "rgba(255,255,255,0.08)"; ctx.fill();
+  ctx.beginPath(); ctx.arc(W/2, 260, iconSize/2, 0, Math.PI*2); ctx.clip();
+  ctx.drawImage(tmpC, W/2-iconSize/2, 260-iconSize/2, iconSize, iconSize);
+  ctx.restore();
+
+  // ── タイプ名 ──
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "bold 52px sans-serif";
+  ctx.fillText(typeName, W/2, 460);
+
+  // ── キャッチ ──
+  ctx.fillStyle = "rgba(255,255,255,0.55)";
+  ctx.font = "26px sans-serif";
+  ctx.fillText("「" + t.catch + "」", W/2, 510);
+
+  // ── 区切り線 ──
+  ctx.strokeStyle = "rgba(255,255,255,0.12)"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(W*0.1, 545); ctx.lineTo(W*0.9, 545); ctx.stroke();
+
+  // ── 特徴テキスト（折り返し） ──
+  const desc = t.desc.replace(/\n\n/g, "\n").replace(/\n/g, " ");
+  const lines = wrapText(ctx, desc, W*0.8, "22px sans-serif");
+  ctx.fillStyle = "rgba(255,255,255,0.72)";
+  ctx.font = "22px sans-serif";
+  ctx.textAlign = "center";
+  const lineH = 36;
+  const textStartY = 580;
+  lines.slice(0, 6).forEach((line, i) => {
+    ctx.fillText(line, W/2, textStartY + i * lineH);
+  });
+
+  // ── 上田プロフィール帯 ──
+  const profY = textStartY + Math.min(lines.length, 6) * lineH + 32;
+  ctx.fillStyle = "rgba(255,255,255,0.07)";
+  ctx.beginPath(); ctx.roundRect(W*0.08, profY, W*0.84, 90, 12); ctx.fill();
+
+  // 顔写真（円形）
+  const profileImg = document.getElementById("profileImgCache");
+  if(profileImg && profileImg.complete) {
+    const pr = 30;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(W*0.08 + 56, profY + 45, pr, 0, Math.PI*2); ctx.clip();
+    ctx.drawImage(profileImg, W*0.08+56-pr, profY+45-pr, pr*2, pr*2);
+    ctx.restore();
+    // 枠
+    ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(W*0.08+56, profY+45, pr, 0, Math.PI*2); ctx.stroke();
+  }
+
+  // 名前・役職
+  ctx.textAlign = "left"; ctx.textBaseline = "middle";
+  ctx.fillStyle = "#E8956A";
+  ctx.font = "bold 24px sans-serif";
+  ctx.fillText("上田 尚", W*0.08 + 104, profY + 32);
+  ctx.fillStyle = "rgba(255,255,255,0.45)";
+  ctx.font = "18px sans-serif";
+  ctx.fillText("家族になろうよ。代表カウンセラー", W*0.08 + 104, profY + 60);
+
+  // ── サイト情報 ──
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillStyle = "rgba(255,255,255,0.25)";
+  ctx.font = "18px sans-serif";
+  ctx.fillText("婚活タイプ診断 by 家族になろうよ。｜ kisshiss.com", W/2, profY + 110);
+
+  return canvas.toDataURL("image/png");
+}
+
+// テキスト折り返しヘルパー
+function wrapText(ctx, text, maxWidth, font) {
+  ctx.font = font;
+  const words = text.split("");
+  const lines = [];
+  let line = "";
+  for(let i=0; i<words.length; i++){
+    const test = line + words[i];
+    if(ctx.measureText(test).width > maxWidth && line !== ""){
+      lines.push(line);
+      line = words[i];
+    } else {
+      line = test;
+    }
+  }
+  if(line) lines.push(line);
+  return lines;
+}
+
+// ===== QUIZ LOGIC =====
+function calcResult() {
+  const scores = {};
+  Object.keys(types).forEach(t => scores[t]=0);
+  answers.forEach(a => { if(a&&a.types) a.types.forEach(t=>{ if(scores[t]!==undefined) scores[t]++; }); });
+  return Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const pct = Math.round(((currentQ+1)/questions.length)*100);
+  document.getElementById("progressText").textContent = `質問 ${currentQ+1} / ${questions.length}`;
+  document.getElementById("progressPct").textContent = pct+"%";
+  document.getElementById("progressFill").style.width = pct+"%";
+  document.getElementById("questionNum").textContent = `Q.${String(currentQ+1).padStart(2,"0")}`;
+  document.getElementById("questionText").textContent = q.text;
+
+  const wrap = document.getElementById("choicesWrap");
+  wrap.innerHTML=""; wrap.classList.add("slide-in");
+  setTimeout(()=>wrap.classList.remove("slide-in"),350);
+
+  q.choices.forEach(c => {
+    const btn = document.createElement("button");
+    btn.className = "choice-btn";
+    if(answers[currentQ]===c){ btn.classList.add("selected"); selectedChoice=c; }
+    const lbl = document.createElement("span"); lbl.className="choice-label"; lbl.textContent=c.label;
+    btn.appendChild(lbl); btn.appendChild(document.createTextNode(c.text));
+    btn.onclick = ()=>selectChoice(c,btn);
+    wrap.appendChild(btn);
+  });
+
+  document.getElementById("backBtn").disabled = currentQ===0;
+  const nb = document.getElementById("nextBtn");
+  nb.classList.toggle("enabled",!!answers[currentQ]);
+  if(!answers[currentQ]) selectedChoice=null;
+  nb.textContent = currentQ===questions.length-1 ? "結果を見る 🎉" : "次へ →";
+}
+
+function selectChoice(choice,btn) {
+  document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("selected"));
+  btn.classList.add("selected"); selectedChoice=choice; answers[currentQ]=choice;
+  document.getElementById("nextBtn").classList.add("enabled");
+}
+
+function nextQuestion() {
+  if(!selectedChoice) return;
+  if(currentQ<questions.length-1){ currentQ++; selectedChoice=null; renderQuestion(); }
+  else showResult();
+}
+
+function prevQuestion() {
+  if(currentQ>0){ currentQ--; selectedChoice=answers[currentQ]||null; renderQuestion(); }
+}
+
+function showResult() {
+  const typeName = calcResult();
+  currentTypeName = typeName;
+  const t = types[typeName];
+
+  // draw icon on result page
+  const iconCanvas = document.getElementById("typeIconCanvas");
+  drawTypeIcon(iconCanvas, typeName, 320);
+
+  document.getElementById("resultName").textContent = typeName;
+  document.getElementById("resultCatch").textContent = t.catch;
+  document.getElementById("resultDescTitle").textContent = t.descTitle;
+  document.getElementById("resultDesc").textContent = t.desc;
+  document.getElementById("resultAdvice").textContent = t.advice;
+
+  // 画面遷移を先に行う（画像生成を待たない）
+  document.getElementById("quizScreen").classList.remove("active");
+  document.getElementById("resultScreen").classList.add("active");
+  window.scrollTo(0,0);
+
+  // シェア画像生成（プロフィール画像ロード後に実行）
+  const profileImg = document.getElementById("profileImgCache");
+  const doGenerate = () => {
+    try {
+      const shareDataUrl = generateShareImage(typeName);
+      document.getElementById("sharePreviewImg").src = shareDataUrl;
+      document.getElementById("shareImgDownload").href = shareDataUrl;
+    } catch(e) {
+      console.warn("シェア画像生成エラー:", e);
+    }
+  };
+
+  if(profileImg.complete && profileImg.naturalWidth > 0) {
+    doGenerate();
+  } else {
+    profileImg.onload = doGenerate;
+    profileImg.onerror = doGenerate; // 画像がなくてもクラッシュしない
+  }
+
+  // share URLs
+  const url = "https://kisshiss.com";
+  const text = encodeURIComponent(`私の婚活タイプは「${typeName}」でした！\n「${t.catch}」\n\n婚活タイプ診断 by 家族になろうよ。\n${url}`);
+  document.getElementById("shareX").href = `https://x.com/intent/tweet?text=${text}`;
+  document.getElementById("shareLine").href = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${text}`;
+}
+
+function shareToX() {
+  // ①画像を自動ダウンロード
+  const dlLink = document.getElementById("shareImgDownload");
+  dlLink.click();
+
+  // ②案内を表示
+  const guide = document.getElementById("xGuide");
+  guide.style.display = "block";
+
+  // ③少し待ってからX投稿画面を開く
+  const t = types[currentTypeName];
+  const url = "https://kisshiss.com";
+  const text = encodeURIComponent(`私の婚活タイプは「${currentTypeName}」でした！\n「${t.catch}」\n\n婚活タイプ診断 by 家族になろうよ。\n${url}`);
+  setTimeout(() => {
+    window.open(`https://x.com/intent/tweet?text=${text}`, "_blank");
+  }, 800);
+}
+function copyShareText() {
+  const t = types[currentTypeName];
+  const text = `私の婚活タイプは「${currentTypeName}」でした！\n「${t.catch}」\n\n婚活タイプ診断 by 家族になろうよ。\nhttps://kisshiss.com`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const toast = document.getElementById("toast");
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"),2500);
+  });
+}
+
+function startQuiz() {
+  currentQ=0; answers=[]; selectedChoice=null;
+  document.getElementById("topScreen").style.display="none";
+  document.getElementById("topScreen").classList.remove("active");
+  document.getElementById("quizScreen").classList.add("active");
+  renderQuestion(); window.scrollTo(0,0);
+}
+
+function resetQuiz() {
+  currentQ=0; answers=[]; selectedChoice=null;
+  document.getElementById("resultScreen").classList.remove("active");
+  document.getElementById("topScreen").style.display="flex";
+  document.getElementById("topScreen").classList.add("active");
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
